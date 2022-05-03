@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"
+	xmlns:content="http://purl.org/rss/1.0/modules/content/"
+	xmlns:wfw="http://wellformedweb.org/CommentAPI/"
+	xmlns:dc="http://purl.org/dc/elements/1.1/"
+	xmlns:atom="http://www.w3.org/2005/Atom"
+	xmlns:sy="http://purl.org/rss/1.0/modules/syndication/"
+	xmlns:slash="http://purl.org/rss/1.0/modules/slash/"
+	
+	xmlns:georss="http://www.georss.org/georss"
+	xmlns:geo="http://www.w3.org/2003/01/geo/wgs84_pos#"
+	>
+
+<channel>
+	<title>Programming &#8211; Pedro&#039;s blog</title>
+	<atom:link href="./index.html" rel="self" type="application/rss+xml" />
+	<link>./../../../index.html</link>
+	<description>Welcome to Pedro Nariyoshi&#039;s website</description>
+	<lastBuildDate>Wed, 09 Apr 2014 14:55:03 +0000</lastBuildDate>
+	<language>en-US</language>
+	<sy:updatePeriod>
+	hourly	</sy:updatePeriod>
+	<sy:updateFrequency>
+	1	</sy:updateFrequency>
+	<generator>https://wordpress.org/?v=5.9.3</generator>
+
+<image>
+	<url>https://i0.wp.com/pedro.crabdance.com/wp-content/uploads/2015/02/favicon.ico.gif?fit=16%2C16&#038;ssl=1</url>
+	<title>Programming &#8211; Pedro&#039;s blog</title>
+	<link>./../../../index.html</link>
+	<width>32</width>
+	<height>32</height>
+</image> 
+	<item>
+		<title>Invalid array pointers in C</title>
+		<link>./../../../2013/weird-bug-with-array-pointers-in-c/index.html</link>
+					<comments>./../../../2013/weird-bug-with-array-pointers-in-c/index.html#respond</comments>
+		
+		<dc:creator><![CDATA[Pedro Nariyoshi]]></dc:creator>
+		<pubDate>Thu, 21 Nov 2013 16:51:38 +0000</pubDate>
+				<category><![CDATA[Programming]]></category>
+		<guid isPermaLink="false">./../../../index.html?p=129</guid>
+
+					<description><![CDATA[I&#8217;ve been working with the MEX API. It basically allows you to run C/Fortran code from MATLAB. This can be very useful, since you can do some performance critical steps in C/Fortran and the rest of the code in Matlab. But often enough, when you try to combine two things with complimentary features, you end [&#8230;]]]></description>
+										<content:encoded><![CDATA[<p>I&#8217;ve been working with the MEX API. It basically allows you to run C/Fortran code from MATLAB. This can be very useful, since you can do some performance critical steps in C/Fortran and the rest of the code in Matlab. But often enough, when you try to combine two things with complimentary features, you end up with the worst of both worlds. This is not entirely the case for CMEX, but it does involve much more thought to implement efficient code (since MATLAB&#8217;s JIT compiler has been becoming better over time).</p>
+<p>But back to the subject. I had recently, amongst other changes, replaced the <em>unsigned ints</em> for <em>ints</em>. The code would run fine, I could manipulate the output, plot it, mesh it, etc. However, as soon as I cleared it, I would get an ugly crash with the not-very-helpful message:</p>
+<pre>free(): invalid pointer: 0xsomememoryaddress</pre>
+<p>Oopsie! What in the world does that mean? I investigated the bug further using <em>gdb</em>, but the address I got from the crash message was not part of my variables. After some fussing around, I found out that the problem was that one of our <em>ints</em> was initialized with <em>UINT_MAX</em>, which is <img src="https://s0.wp.com/latex.php?latex=2%5E%7B32%7D-1&#038;bg=ffffff&#038;fg=000&#038;s=0&#038;c=20201002" alt="2^{32}-1" class="latex" /> for <em>unsigned ints</em>, but is <img src="https://s0.wp.com/latex.php?latex=-1&#038;bg=ffffff&#038;fg=000&#038;s=0&#038;c=20201002" alt="-1" class="latex" /> for <em>signed ints</em> (at least for x86 processors). So, it turns out I was writing to the negative indexes of one of the arrays (the exact one that would crash when cleared).</p>
+<p>My guess is that <em>array[-1]</em> contains some kind of control code for the array. Maybe a pointer or identifier, so that <em>free()</em> knows what/how much memory to free.</p>
+<p>An example code of the issue can be found below:</p>
+<pre>#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+
+int main()
+{
+        double * array = (double*) malloc(100*sizeof(double));
+
+        printf("Array[-1] = 0\n");
+        array[-1] = 0;
+
+        printf("Freeing array\n");
+        free(array);
+        return 0;
+}</pre>
+<p>Which outputs:</p>
+<pre>*** Error in `./negarr': free(): invalid pointer: 0x0000000000828010 ***</pre>
+<p>I hope this is helpful for someone.</p>
+]]></content:encoded>
+					
+					<wfw:commentRss>./../../../2013/weird-bug-with-array-pointers-in-c/feed/index.html</wfw:commentRss>
+			<slash:comments>0</slash:comments>
+		
+		
+			</item>
+		<item>
+		<title>Writing code using cuBLAS and cuSPARSE</title>
+		<link>./../../../2013/writing-codes-using-cublas-and-cusparse/index.html</link>
+					<comments>./../../../2013/writing-codes-using-cublas-and-cusparse/index.html#respond</comments>
+		
+		<dc:creator><![CDATA[Pedro Nariyoshi]]></dc:creator>
+		<pubDate>Tue, 22 Oct 2013 02:32:55 +0000</pubDate>
+				<category><![CDATA[Programming]]></category>
+		<guid isPermaLink="false">./../../../index.html?p=105</guid>
+
+					<description><![CDATA[When starting to use a new API or library, I&#8217;m usually find myself overwhelmed by the whole process. The main issue, I believe, is that the only way to learn how to program is by&#8230; well, programming (and I don&#8217;t mean it as a joke, but if you must insist&#8230;). Often enough, I find the [&#8230;]]]></description>
+										<content:encoded><![CDATA[<p>When starting to use a new API or library, I&#8217;m usually find myself overwhelmed by the whole process. The main issue, I believe, is that the only way to learn how to program is by&#8230; well, programming (<a title="Recursive programming" href="http://i3.kym-cdn.com/photos/images/original/000/091/255/metadog.jpg" target="_blank">and I don&#8217;t mean it as a joke, but if you must insist&#8230;</a>).</p>
+<p>Often enough, I find the examples terribly hard to follow. Usually, the problem lies in that there is a single example that tries to show all the features in the program. That approach is a very good way to quickly refresh your memory on how to use a library you already know how to use, but not necessarily useful for a first-timer. In other words, <a title="Columbus Egg" href="http://en.wikipedia.org/wiki/Egg_of_Columbus" target="_blank">it&#8217;s only easy after you know how to do it</a>.</p>
+<p>Thinking about this, I&#8217;ve created a really really simple CUBLAS example. The code is available here: <a href="https://pedro.thecrabdance.com/wp-content/uploads/2013/10/Blassample.zip">CUBLAS Sample.zip</a></p>
+<p>For those familiar with BLAS/LAPACK and CUDA, there&#8217;s not a whole lot of difference, but I think you&#8217;ve gotta drink milk before you eat solid food.</p>
+<p>For those who are interested, you can check out a presentation I&#8217;ve given at MSU about cuBLAS and cuSPARSE on Oct. 22 2013: <a href="https://pedro.thecrabdance.com/wp-content/uploads/2013/10/BLASSPARSE.pdf">cuBLAS and cuSPARSE presentation.pdf</a></p>
+<p>The code for the 2D Jacobi Iteration that I&#8217;ve used is here with the approval of Prof. Christlieb: <a href="https://pedro.thecrabdance.com/wp-content/uploads/2013/10/2DJacobiBlasSparse.zip">2DJacobiBlasSparse.zip</a></p>
+]]></content:encoded>
+					
+					<wfw:commentRss>./../../../2013/writing-codes-using-cublas-and-cusparse/feed/index.html</wfw:commentRss>
+			<slash:comments>0</slash:comments>
+		
+		
+			</item>
+	</channel>
+</rss>

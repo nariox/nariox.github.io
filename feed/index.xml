@@ -1,0 +1,450 @@
+<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"
+	xmlns:content="http://purl.org/rss/1.0/modules/content/"
+	xmlns:wfw="http://wellformedweb.org/CommentAPI/"
+	xmlns:dc="http://purl.org/dc/elements/1.1/"
+	xmlns:atom="http://www.w3.org/2005/Atom"
+	xmlns:sy="http://purl.org/rss/1.0/modules/syndication/"
+	xmlns:slash="http://purl.org/rss/1.0/modules/slash/"
+	
+	xmlns:georss="http://www.georss.org/georss"
+	xmlns:geo="http://www.w3.org/2003/01/geo/wgs84_pos#"
+	>
+
+<channel>
+	<title>Pedro&#039;s blog</title>
+	<atom:link href="./index.html" rel="self" type="application/rss+xml" />
+	<link>./../index.html</link>
+	<description>Welcome to Pedro Nariyoshi&#039;s website</description>
+	<lastBuildDate>Fri, 23 Sep 2016 19:37:38 +0000</lastBuildDate>
+	<language>en-US</language>
+	<sy:updatePeriod>
+	hourly	</sy:updatePeriod>
+	<sy:updateFrequency>
+	1	</sy:updateFrequency>
+	<generator>https://wordpress.org/?v=5.9.3</generator>
+
+<image>
+	<url>https://i0.wp.com/pedro.crabdance.com/wp-content/uploads/2015/02/favicon.ico.gif?fit=16%2C16&#038;ssl=1</url>
+	<title>Pedro&#039;s blog</title>
+	<link>./../index.html</link>
+	<width>32</width>
+	<height>32</height>
+</image> 
+	<item>
+		<title>Let&#8217;s Encrypt the web!</title>
+		<link>./../2016/lets-encrypt-the-web/index.html</link>
+					<comments>./../2016/lets-encrypt-the-web/index.html#respond</comments>
+		
+		<dc:creator><![CDATA[Pedro Nariyoshi]]></dc:creator>
+		<pubDate>Fri, 15 Jul 2016 12:50:18 +0000</pubDate>
+				<category><![CDATA[Uncategorized]]></category>
+		<guid isPermaLink="false">./../index.html?p=342</guid>
+
+					<description><![CDATA[Or at least your own personal websites. Let&#8217;s encrypt is, according to their website,  &#8220;a free, automated, and open certificate authority (CA), run for the public’s benefit. Let’s Encrypt is a service provided by the Internet Security Research Group (ISRG).&#8221; In summary, they provide valid and trusted SSL certificate for commoners like you and me [&#8230;]]]></description>
+										<content:encoded><![CDATA[<p>Or at least your own personal websites. Let&#8217;s encrypt is, according to their website,  &#8220;a free, automated, and open certificate authority (CA), run for the public’s benefit. Let’s Encrypt is a service provided by the <a href="https://letsencrypt.org/isrg/">Internet Security Research Group (ISRG)</a>.&#8221;</p>
+<p>In summary, they provide valid and trusted SSL certificate for commoners like you and me for free! Great stuff, no need for using self-signed certificates! First you need to obtain their client <strong>certbot</strong>. They provide a plugin to work directly with nginx, but I didn&#8217;t have much luck with it (it is worth mentioning that it is still in experimental phase). Here, I&#8217;ll show how to manually create your certificates and add them to nginx.</p>
+<p>As root, do:</p>
+<pre># certbot certonly --manual</pre>
+<p>Then enter your domain (or subdomain). And it&#8217;ll give you something like:</p>
+<pre>mkdir -p /tmp/certbot/public_html/.well-known/acme-challenge
+cd /tmp/certbot/public_html
+printf "%s" SOMETEXTANDNUMBERS &gt; .well-known/acme-challenge/SOMETEXTANDNUMBERS
+# run only once per server:
+$(command -v python2 || command -v python2.7 || command -v python2.6) -c \
+"import BaseHTTPServer, SimpleHTTPServer; \
+s = BaseHTTPServer.HTTPServer(('', 80), SimpleHTTPServer.SimpleHTTPRequestHandler); \
+s.serve_forever()"</pre>
+<p>Make sure varnish/nginx are not running, copy the code and run it (as root), then press enter. If you encounter errors, you might need to install the python packages for BaseHTTPServer and SimpleHTTPServer. Once you do that, the certificates will be stored at /etc/letsencrypt/live/yourdomain/fullchain.pem and the key to /etc/letsencrypt/live/yourdomain/privkey.pem, where &#8220;yourdomain&#8221; is the domain you sent to the script.</p>
+<p>Last step is to add these lines to your nginx configuration:</p>
+<pre>server{
+(...)
+ssl_certificate /etc/letsencrypt/live/yourdomain/fullchain.pem;
+ssl_certificate_key /etc/letsencrypt/live/yourdomain/privkey.pem;
+(...)
+}</pre>
+<p>You should be ready to run nginx/varnish now. The certificates are valid for 3 months, to renew them, simply follow the same instructions again. (;</p>
+<p>That should be all! Good luck.</p>
+]]></content:encoded>
+					
+					<wfw:commentRss>./../2016/lets-encrypt-the-web/feed/index.html</wfw:commentRss>
+			<slash:comments>0</slash:comments>
+		
+		
+			</item>
+		<item>
+		<title>Varnish cache</title>
+		<link>./../2015/varnish-cache/index.html</link>
+					<comments>./../2015/varnish-cache/index.html#respond</comments>
+		
+		<dc:creator><![CDATA[Pedro Nariyoshi]]></dc:creator>
+		<pubDate>Fri, 12 Jun 2015 13:37:40 +0000</pubDate>
+				<category><![CDATA[Sys Admin]]></category>
+		<guid isPermaLink="false">./../index.html?p=298</guid>
+
+					<description><![CDATA[Varnish has been updated to version 4 in Arch (for a while now, actually&#8230;). I use varnish mostly to speed up my wordpress instances. Unfortunately however, I couldn&#8217;t find any good VCL sample for wordpress and varnish 4. It&#8217;s funny that varnish&#8217;s website still has a few samples of VCLs for wordpress and varnish 3. [&#8230;]]]></description>
+										<content:encoded><![CDATA[<p><em>Varnish</em> has been updated to version 4 in Arch (for a while now, actually&#8230;). I use <em>varnish</em> mostly to speed up my <em>wordpress</em> instances. Unfortunately however, I couldn&#8217;t find any good VCL sample for <em>wordpress</em> and <em>varnish</em> 4. It&#8217;s funny that varnish&#8217;s website still has a few samples of VCLs for <em>wordpress</em> and <em>varnish</em> 3. It&#8217;s beyond me why a company would not want to help people to use their latest products (although they provide a <a href="https://www.varnish-cache.org/docs/trunk/whats-new/upgrading.html">pretty good guide</a> to update VCL 3.0 to VCL 4.0 for those willing to dig deeper).but in any case. I updated an old VCL file I had to VCL 4.0 and I&#8217;m sharing it with you. </p>
+<p>By no means I&#8217;m a varnish expert and there may be bugs in this VCL, but feel free to use it and please let me know if you find anything wrong with it.</p>
+<pre># /etc/varnish/default.vcl
+vcl 4.0;
+
+backend default {
+    .host = "127.0.0.1";
+    .port = "8080";
+    .connect_timeout = 600s;
+    .first_byte_timeout = 600s;
+    .between_bytes_timeout = 600s;
+}
+
+acl purge {
+        "localhost";
+        "192.168.0.0"/16;
+}
+
+sub vcl_recv {
+        if (req.method == "PURGE") {
+                if (!client.ip ~ purge) {
+                        return(synth(405,"Not allowed."));
+                }
+                return (purge);
+        }
+}
+
+sub vcl_hit {
+        if (req.method == "PURGE") {
+                if (!client.ip ~ purge) {
+                        return(synth(403, "Not allowed."));
+                }
+                ban("req.http.host == " + req.http.host +
+                      " &amp;&amp; req.url == " + req.url);
+                return(synth(200, "Purged"));        }
+}
+
+sub vcl_miss {
+        if (req.method == "PURGE") {
+                if (!client.ip ~ purge) {
+                        return(synth(403, "Not allowed."));
+                }
+                ban("req.http.host == " + req.http.host +
+                      " &amp;&amp; req.url == " + req.url);
+                return(synth(200, "Purged"));        }
+}
+
+
+</pre>
+]]></content:encoded>
+					
+					<wfw:commentRss>./../2015/varnish-cache/feed/index.html</wfw:commentRss>
+			<slash:comments>0</slash:comments>
+		
+		
+			</item>
+		<item>
+		<title>Using OpenSSH as a SOCKS proxy</title>
+		<link>./../2015/using-openssh-as-a-socks-proxy/index.html</link>
+					<comments>./../2015/using-openssh-as-a-socks-proxy/index.html#respond</comments>
+		
+		<dc:creator><![CDATA[Pedro Nariyoshi]]></dc:creator>
+		<pubDate>Tue, 06 Jan 2015 20:00:54 +0000</pubDate>
+				<category><![CDATA[Uncategorized]]></category>
+		<guid isPermaLink="false">https://pedro.thecrabdance.com/?p=287</guid>
+
+					<description><![CDATA[I often find myself in need to access papers, files and other things that I only have access from within the university network. A neat way to get access is by using OpenSSH as proxy server (I&#8217;ve tried unsuccessfully to configure the university&#8217;s VPN, but to no avail&#8230;). The steps are simple, first run: ssh [&#8230;]]]></description>
+										<content:encoded><![CDATA[<p>I often find myself in need to access papers, files and other things that I only have access from within the university network. A neat way to get access is by using OpenSSH as proxy server (I&#8217;ve tried unsuccessfully to configure the university&#8217;s VPN, but to no avail&#8230;). The steps are simple, first run:</p>
+<pre>ssh -NCD 9999 uname@university.edu</pre>
+<ul>
+<li>-N: prevents an interactive shell from being opened, not strictly necessary</li>
+<li>-C: enables gzip compression, not sure if it actually improves performance (given the extra CPU overhead), but the overall result was satisfactory, so I left it on.</li>
+<li>-D [port]: enables local dynamic port forwarding to localhost:9999</li>
+</ul>
+<p>Now it&#8217;s time to configure your browser. On Firefox, the proxy settings are found at Preferences -> Advanced -> Network -> Settings (although there are add-ons that allow quick switch from different proxy servers). Enable &#8220;Manual Proxy&#8221; and set <em>localhost</em>  as your host and <em>9999</em> as your port. You should be now done.</p>
+]]></content:encoded>
+					
+					<wfw:commentRss>./../2015/using-openssh-as-a-socks-proxy/feed/index.html</wfw:commentRss>
+			<slash:comments>0</slash:comments>
+		
+		
+			</item>
+		<item>
+		<title>Mapping the Caps Lock key as Super Key</title>
+		<link>./../2015/mapping-the-caps-lock-key-as-super-key/index.html</link>
+					<comments>./../2015/mapping-the-caps-lock-key-as-super-key/index.html#respond</comments>
+		
+		<dc:creator><![CDATA[Pedro Nariyoshi]]></dc:creator>
+		<pubDate>Tue, 06 Jan 2015 15:01:27 +0000</pubDate>
+				<category><![CDATA[Uncategorized]]></category>
+		<guid isPermaLink="false">https://pedro.thecrabdance.com/?p=284</guid>
+
+					<description><![CDATA[I&#8217;ve never found the Caps Lock key very useful. Besides never using it, it takes a very large space in a particularly easy-to-reach region of the keyboard (next to my left pinky). It seems like Google shares my opinion. Ever since I&#8217;ve gotten my Acer C720, I&#8217;ve noticed how useful would be to have the [&#8230;]]]></description>
+										<content:encoded><![CDATA[<p>I&#8217;ve never found the <em>Caps Lock</em> key very useful. Besides never using it, it takes a very large space in a particularly easy-to-reach region of the keyboard (next to my left pinky). It seems like Google shares my opinion. Ever since I&#8217;ve gotten my Acer C720, I&#8217;ve noticed how useful would be to have the <em>Super</em> key (<em>aka Windows </em>key) more easily accessible to my fingers.</p>
+<p>Then I decided to map the <em>Caps Lock</em> key as a <em>Super</em> key. It didn&#8217;t take long for me to find that this mapping is so common that a single short command can be used to do it:</p>
+<pre>setxkbmap <span class="re5">-option</span> caps:super</pre>
+<p>There, easy enough. But there are other ways to do this. The one I ended up using is to use <em>dconf-editor</em> to set this modifier as default in GNOME. The key name is <em>org.gnome.desktop.input-sources.xkb-options</em>. Just add <em>[&#8216;caps:super&#8217;]</em> and you&#8217;ll be set.</p>
+]]></content:encoded>
+					
+					<wfw:commentRss>./../2015/mapping-the-caps-lock-key-as-super-key/feed/index.html</wfw:commentRss>
+			<slash:comments>0</slash:comments>
+		
+		
+			</item>
+		<item>
+		<title>More MATLAB woes&#8230;</title>
+		<link>./../2014/more-matlab-woes/index.html</link>
+					<comments>./../2014/more-matlab-woes/index.html#respond</comments>
+		
+		<dc:creator><![CDATA[Pedro Nariyoshi]]></dc:creator>
+		<pubDate>Wed, 17 Sep 2014 20:48:50 +0000</pubDate>
+				<category><![CDATA[Sys Admin]]></category>
+		<guid isPermaLink="false">https://pedro.thecrabdance.com/?p=272</guid>
+
+					<description><![CDATA[Matlab is a wonderful program. It really is pretty neat. You can program really quickly and get results fast. BUT it has a few things that make it annoying to work with sometimes. One of my beefs is that it preloads some libraries in it. The problem is that those libraries are not actual libraries, [&#8230;]]]></description>
+										<content:encoded><![CDATA[<p>Matlab is a wonderful program. It really is pretty neat. You can program really quickly and get results fast. BUT it has a few things that make it annoying to work with sometimes.</p>
+<p>One of my beefs is that it preloads some libraries in it. The problem is that those libraries are not actual libraries, but rather pointers to specific libraries. So MATLAB&#8217;s <em>libstdc++.so.5</em> could require <em>libstdc++.so.5.11</em>, in which case you are doomed to keep looking for the problem until you figure your distribution might not even package this particular version of <em>libstdc++.so.5</em>. Thankfully since switching to ArchLinux, I haven&#8217;t had much problem finding particular packages (even if I have to use AUR). The reason not to use the system&#8217;s <em>libstdc++.so.5</em> is beyond me.</p>
+<p>Anyways, I was having problem with MATLAB giving me:</p>
+<pre>/usr/lib/libharfbuzz.so.0: undefined symbol: FT_Face_GetCharVariantIndex</pre>
+<p>I traced the problem to MATLAB linking to and older version of <em>libfreetype</em>. The solution was quite simple. All I had to do was manually tell MATLAB to use the &#8220;right&#8221; libfreetype with:</p>
+<pre>LD_PRELOAD=/usr/lib/libfreetype.so.6 matlab</pre>
+<p>To make this automated, I added an alias to my bashrc:</p>
+<pre>alias matlab="LD_PRELOAD=/usr/lib/libfreetype.so.6 matlab"</pre>
+<p>Now, all works properly. <em>GG</em></p>
+]]></content:encoded>
+					
+					<wfw:commentRss>./../2014/more-matlab-woes/feed/index.html</wfw:commentRss>
+			<slash:comments>0</slash:comments>
+		
+		
+			</item>
+		<item>
+		<title>Installing Arch on the C720 &#8211; Part 3/3 &#8211; Fine-tuning</title>
+		<link>./../2014/installing-arch-on-the-c720-part-3-fine-tuning/index.html</link>
+					<comments>./../2014/installing-arch-on-the-c720-part-3-fine-tuning/index.html#respond</comments>
+		
+		<dc:creator><![CDATA[Pedro Nariyoshi]]></dc:creator>
+		<pubDate>Mon, 07 Jul 2014 22:20:11 +0000</pubDate>
+				<category><![CDATA[Sys Admin]]></category>
+		<guid isPermaLink="false">https://pedro.thecrabdance.com/?p=247</guid>
+
+					<description><![CDATA[After installation, there are a few things that are not necessary, but might improve your experience with your C720. Below, I&#8217;ve posted a few that I&#8217;m using. Feel free to suggest other in the comments section. Install yaourt yaourt is my favourite AUR wrapper. This is not specific to the C720, but I thought it [&#8230;]]]></description>
+										<content:encoded><![CDATA[<p>After installation, there are a few things that are not necessary, but might improve your experience with your C720. Below, I&#8217;ve posted a few that I&#8217;m using. Feel free to suggest other in the comments section.</p>
+<h2>Install <em>yaourt</em></h2>
+<p><em>yaourt </em>is my favourite AUR wrapper. This is not specific to the C720, but I thought it might be useful nonetheless. I&#8217;ve tried to make the installation as simple as possible. Before installing <em>yaourt</em>, the <em>package-query</em> package and the <em>base-devel</em> metapackage must be installed. These commands build and install both.</p>
+<pre>pacman -S --needed base-devel
+cd /tmp
+mkdir builds
+cd builds
+wget https://aur.archlinux.org/packages/pa/package-query/PKGBUILD
+makepkg -si
+wget https://aur.archlinux.org/packages/ya/yaourt/PKGBUILD
+makepkg -si</pre>
+<h2><del>Improve WiFi and Bluetooth performance</del></h2>
+<pre><del>/etc/modprobe.d/ath9k.conf
+options ath9k btcoex_enable=1 bt_ant_diversity=1</del></pre>
+<h2><del>Enable some GPU power/performance settings</del></h2>
+<pre><del>/etc/modprobe.d/i915.conf
+options i915 enable_fbc=1 lvds_downclock=1 lvds_use_ssc=1
+options i915 enable_psr=1 nuclear_pageflip=1 use_mmio_flip=1</del>
+</pre>
+<h2>UPDATE: Follow <a href="https://wiki.archlinux.org/index.php/Acer_C720_Chromebook">archwiki&#8217;s instructions</a> for latest/best settings.</h2>
+<h2>Enable energy savings</h2>
+<pre># pacman -S tlp
+# systemctl enable tlp
+# systemctl start tlp</pre>
+<p>Install the linux-chromebook package</p>
+<h2>Install zramswap</h2>
+<p>The amount of RAM in the C720 is pretty limited (specially if you are running Firefox and GNOME3, as I am). <em>Zramswap</em> creates a ramdisk and compresses it using a fast (de)compression algorithm and uses it as swap. This is usually faster than reading from a HDD. In the case of the C720, the seek delays of the SSD are much smaller, but this allows you to skip a swap partition all together (preventing writes into the SSD).</p>
+<pre>yaourt -S zramswap</pre>
+<p>In kernel 3.15 and later, you can change the default compression algorithm <em>lzo</em> to <em>lz4</em>. While it&#8217;s not clear how much faster is <em>lz4</em> in real life situations, it&#8217;s expected to be faster than lzo (at the cost of a slightly lower compression ratio and larger memory usage during compression). I&#8217;ve written a patch for the <em>zramctrl</em> script, it&#8217;s available here: <a title="patch" href="http://pastie.org/9312716">patch</a></p>
+<h2>Reduce Swappiness</h2>
+<p>Another thing to help reduce the use of swap is reducing the swappiness.</p>
+<pre>/etc/sysctl.d/99-sysctl.conf
+vm.swappiness=1
+vm.vfs_cache_pressure=50</pre>
+<p>gl;hf</p>
+]]></content:encoded>
+					
+					<wfw:commentRss>./../2014/installing-arch-on-the-c720-part-3-fine-tuning/feed/index.html</wfw:commentRss>
+			<slash:comments>0</slash:comments>
+		
+		
+			</item>
+		<item>
+		<title>Installing Arch on the C720 &#8211; Part 2/3 &#8211; Installation</title>
+		<link>./../2014/installing-arch-on-the-c720-part-2-installation/index.html</link>
+					<comments>./../2014/installing-arch-on-the-c720-part-2-installation/index.html#respond</comments>
+		
+		<dc:creator><![CDATA[Pedro Nariyoshi]]></dc:creator>
+		<pubDate>Tue, 01 Jul 2014 17:33:53 +0000</pubDate>
+				<category><![CDATA[Sys Admin]]></category>
+		<guid isPermaLink="false">https://pedro.thecrabdance.com/?p=244</guid>
+
+					<description><![CDATA[Download the ISO Apparently, only the 2013.10 version is working for 64bit installations. Other versions will reboot instead of boot. This bug was reported here. Since most C720 versions only have 2GB, one might ask why should they use the 64bit version. I&#8217;m in no way an expert in this area, but my recollection is [&#8230;]]]></description>
+										<content:encoded><![CDATA[<h2>Download the ISO</h2>
+<p>Apparently, only the 2013.10 version is working for 64bit installations. Other versions will reboot instead of boot. This bug was reported <a title="here" href="https://bugs.archlinux.org/task/40637?project=6">here</a>. Since most C720 versions only have 2GB, one might ask why should they use the 64bit version. I&#8217;m in no way an expert in this area, but my recollection is that x86_64 enables the use of an extra set of general purpose registers in the CPU. On the flipside, the use of 64bit pointers causes the memory usage to go up a little (which can be remedied with the use of x32-ABI, but it seems like <a href="http://www.phoronix.com/scan.php?page=news_item&amp;px=MTU1MjE">distributors didn&#8217;t have much interest in it</a>). I don&#8217;t have numbers to compare and don&#8217;t want to create any flamewars in my blog. To be fully honest, I think the differences are probably insignificant.</p>
+<p>After downloading, you should extract the contents of the ISO to a USB drive. For UEFI boot you&#8217;d need to rename the drive to <code style="display: inline-block; padding: 0.1em 0.3em;">ARCH_201310</code>, but thankfully BIOS boots are a little more forgiving.</p>
+<h2>Booting into Arch</h2>
+<p>If you set the boot flags, you should be good to go. If you didn&#8217;t, you&#8217;ll have to press <code style="display: inline-block; padding: 0.1em 0.3em;">Ctrl+L</code> to boot (L for &#8220;legacy boot&#8221;). Once in the menu, press <code style="display: inline-block; padding: 0.1em 0.3em;">Tab</code> to edit the entry and add <code style="display: inline-block; padding: 0.1em 0.3em;">mem=1536m</code> to the line, this forces the live-USB to use 1536MiB of RAM, since the autodetection seems not to be working for the C720.</p>
+<p>Now, you should be able to boot into Arch. First thing I&#8217;ve done was partitioning the SSD using:</p>
+<pre>cgdisk /dev/sda</pre>
+<p>I&#8217;ve created a bios_grub partition (about 1MiB) in the beginning of the drive, so I could do bios boot on this GPT-partitioned drive (you could potentially create a MBR partition table, but I haven&#8217;t tried this possibility). The rest of the SSD was made into my main partition.<br />
+I&#8217;ve made the btrfs partition using:</p>
+<pre>mkfs.btrfs -l 16k /dev/sda2</pre>
+<p>And mounted it with</p>
+<pre>mount /dev/sda2 /mnt -o rw,noatime,compress=lzo,ssd,discard,space_cache,autodefrag,ssd_spread</pre>
+<p>I&#8217;ve chosen btrfs because of the transparent compression, which increases the space I have available (not by much, since lzo&#8217;s compression rate is only about 2 or less) and because it increases the I/O performance (again, only by a little). Some might prefer ext4, and I don&#8217;t blame them, it&#8217;s very stable and the default filesystem in most distributions for a reason. I also wanted to try something a little bit more cutting-edge.</p>
+<p>Connect to your WiFi router with:</p>
+<pre>wifi-menu</pre>
+<p>Before you can pacstrap the system, you have to upgrade the keyring (since the 2013-10 iso is pretty old and it&#8217;s keys have expired), the command is:</p>
+<pre>pacman -Sy archlinux-keyring</pre>
+<p>(I haven&#8217;t tested this myself, but was suggested in the bbs <a href="https://bbs.archlinux.org/viewtopic.php?pid=1425856#p1425856" title="here">here</a>)</p>
+<p>Now you can proceed to install the system to the SSD:</p>
+<pre>pacstrap /mnt base</pre>
+<p>Generate your filesystem table:</p>
+<pre>genfstab -U /mnt >> /mnt/etc/fstab</pre>
+<p>Chroot into the system:</p>
+<pre>arch-chroot /mnt</pre>
+<p>Add a hostname to your computer:</p>
+<pre>echo mynewhostname > /etc/hostname</pre>
+<p>Adjust the timezone information:</p>
+<pre>ln -s /usr/share/zoneinfo/America/Detroit /etc/localtime</pre>
+<p>Create the ramdisk:</p>
+<pre>mkinitcpio -p linux</pre>
+<p>Set a root password:</p>
+<pre>passwd</pre>
+<p>Install GRUB:</p>
+<pre>pacman -S grub
+grub-install --target=i386-pc /dev/sda
+grub-mkconfig -o /boot/grub/grub.cfg</pre>
+<p>You <del>can</del> should install &#8220;dialog&#8221; so that you can use wifi-menu next time you boot:</p>
+<pre>pacman -S dialog</pre>
+<p>Now you can exit the chroot, unmount the disk and reboot:</p>
+<pre>exit
+umount -R /mnt
+reboot</pre>
+<p>That&#8217;s it (sort of), the C720 should reboot into Arch. After this, the configuration will vary greatly between the different purposes you have your machine (DE, services/daemons, users, etc). On the next (and last) post about the C720, I&#8217;ll add some tweaks that I&#8217;ve used in my install.</p>
+<p>GL;HF</p>
+]]></content:encoded>
+					
+					<wfw:commentRss>./../2014/installing-arch-on-the-c720-part-2-installation/feed/index.html</wfw:commentRss>
+			<slash:comments>0</slash:comments>
+		
+		
+			</item>
+		<item>
+		<title>Installing Arch on the C720 &#8211; Part 1/3 &#8211; Preparation</title>
+		<link>./../2014/installing-arch-on-the-c720-part-1-preparation/index.html</link>
+					<comments>./../2014/installing-arch-on-the-c720-part-1-preparation/index.html#respond</comments>
+		
+		<dc:creator><![CDATA[Pedro Nariyoshi]]></dc:creator>
+		<pubDate>Wed, 18 Jun 2014 20:33:31 +0000</pubDate>
+				<category><![CDATA[Sys Admin]]></category>
+		<guid isPermaLink="false">https://pedro.thecrabdance.com/?p=231</guid>
+
+					<description><![CDATA[As much of this blog, I&#8217;m writing this as a way of documenting the process I&#8217;ve done to install it, so that if I have to do it again, I can do it easily. Feel free to ask me questions in the comments, but I can&#8217;t really guarantee anything. Before we start, I want to [&#8230;]]]></description>
+										<content:encoded><![CDATA[<p>As much of this blog, I&#8217;m writing this as a way of documenting the process I&#8217;ve done to install it, so that if I have to do it again, I can do it easily. Feel free to ask me questions in the comments, but I can&#8217;t really guarantee anything. Before we start, I want to clarify that I don&#8217;t have much against Chrome OS and that I&#8217;ll be voiding the warranty (but you can easily skip this if you want to).</p>
+<p>Most of the information I got was from the excellent <a href="https://wiki.archlinux.org/index.php/Acer_C720_Chromebook">ArchWiki</a> and the <a href="https://bbs.archlinux.org/viewtopic.php?id=173418">C720 thread</a> on Arch&#8217;s bbs. Some other information I might have gotten elsewhere, please forgive if I didn&#8217;t credit something. Shoot me an e-mail and I&#8217;ll add the credits as soon as possible.</p>
+<h2>About Chrome OS</h2>
+<p>First of all, I want to tell everyone. This is not a post about how horrible ChromeOS is or anything like this. I actually <em>LIKE</em> ChromeOS in terms of UI/UX. <a href="http://xkcd.com/934/">This comic</a> kinda captures the spirit of it. We use browsers for everything now. Even many &#8220;native&#8221; applications now have decent (or even good) webpage versions (Skype -&gt; Google Talk, LibreOffice/MS Office -&gt; Google Docs, etc). Although I dislike the idea of Google having access to all my (or anyone&#8217;s) files, I think the implementation is actually pretty good.</p>
+<p>The OS can be used by both people that are comfortable with a computer (in which case I assume they&#8217;ll be using a browser most of the time) and people that don&#8217;t really like computers (since it abstracts a lot of &#8220;computery&#8221; stuff). In many cases, when someone asks me what kind of computer should they give their parents or grandparents, my answer is that maybe the best choice is not a computer.</p>
+<p>I am actually pretty sad about the &#8220;desktop&#8217;s decadence&#8221; in the recent years. I really like traditional-mouse-and-keyboard computers, but the fact is that most people are not willing to &#8220;learn&#8221; how to use Linux (or Windows or anything). Some people I know don&#8217;t even like anything that involves &#8220;right-clicking&#8221;. As much as it pains me to say: tablets have been doing a much better job at this. Anyways, ChromeOS is actually good, but I need some more freedom and power. That was the reason all-along to get the C720, but as far as ChromeOS went, I actually thought it was a delightful OS.</p>
+<h2>Why might you want to void your warranty</h2>
+<p>Until you void your warranty (or the warranty expires) the device is covered by a company. This company in a sense is &#8220;responsible&#8221; for your device and, in a sense, it still &#8220;owns&#8221; it. Voiding your warranty gives you full ownership of your device. However, don&#8217;t be <em>foolish</em>, voiding warranties means you also take full responsibility for whatever happens next. Don&#8217;t do it unless you are either capable of fixing your device or aware of the consequences of breaking it (like having to buy a new one etc).</p>
+<p>Now that we&#8217;ve cleared that, let&#8217;s get started.</p>
+<h2>Upgrade SSD + Removing the write-protect screw</h2>
+<p>If you are installing Arch on your laptop, you might want to upgrade the SSD. The initial 16GiB were ok for ChromeOS, but if I want to install programs locally and store larger amounts of files, I need a larger storage. Initially, I thought of getting a SDXC card or similar, but the 128GiB SSD only cost me 99USD, which is well under 1$/GiB, which I think is a pretty good price for a SSD, specially given the fact that the form factor is quite new and it is quite comparable in price with a SD card, but safer, more permanent, elegant and offering much higher perfomance than a SD.</p>
+<p>Upgrading the SSD has been shown in several different blogs (like <a href="http://www.thessdreview.com/daily-news/latest-buzz/acer-chromebook-c720-ssd-upgrade-mydigitalssd-m-2-ngff-128gb-sc2-ssd-worlds-easiest-upgrade/">here</a>, <a href="www.androidcentral.com/how-upgrade-ssd-your-acer-c720-chromebook">here</a>, <a href="http://jacobpewitt.com/upgrading-the-ssd-on-an-acer-c720-chromebook/">here</a>, <a href="http://www.umpcportal.com/2014/01/how-to-upgrade-the-acer-c720-chromebook-with-an-m-2-sata-from-mydigitalsdd/">here</a> and <a href="http://ausdroid.net/2014/02/04/upgrade-the-acer-c720-chromebook-with-a-128-gb-ssd/">here</a>), so I won&#8217;t be going into too much detail about it. The procedure is quite simple, create a recovery disk, remove the screws in the bottom (this is the bit that voids your warranty), pop the lid open, unscrew the old SSD, install the new SSD and screw it in, put the back lid again and put the screws back.</p>
+<p>One small difference in my case is that I removed the write-protect screw (#7 in the <a href="http://www.chromium.org/chromium-os/developer-information-for-chrome-os-devices/acer-c720-chromebook">image in this wiki</a>). This allows us to set some flags in the C720 ROM to boot in BIOS mode automatically. After setting the flags, you should put the screw back to protect the ROM. (Actually, that&#8217;s what should happen in theory. My experience seems to show that writing the ROM with the screw in just corrupts the ROM, instead of preventing writes&#8230; Be careful while flashing the ROM, BAD BAD stuff can happen).</p>
+<h2>Enable developer mode, SeaBIOS and gbb flags</h2>
+<p>After following the instruction for upgrading the SSD, you should have a fully restored ChromeOS. We&#8217;ll have to restore ChromeOS once more. But fear not, it&#8217;ll be the last time. In this section we&#8217;ll be enabling BIOS boot and setting it as default on ChromeOS:</p>
+<ul>
+<li>Press and hold the <code style="display: inline-block; padding: 0.1em 0.3em;">Esc+Refresh</code> keys, then press the <code style="display: inline-block; padding: 0.1em 0.3em;">Power</code> button</li>
+<li>Press <code style="display: inline-block; padding: 0.1em 0.3em;">Ctrl+D</code>, this will erase your user data and enable developer mode.</li>
+<li>Press <code style="display: inline-block; padding: 0.1em 0.3em;">Ctrl+D</code> at the white boot splash screen to enter Chrome OS.</li>
+</ul>
+<p>As soon as you enter Chrome OS, you&#8217;ll now have access to the TTY and some extra functionality.</p>
+<ul>
+<li>First, press <code style="display: inline-block; padding: 0.1em 0.3em;">Ctrl+Alt+F2</code> to go into TTY.</li>
+<li>Use <code style="display: inline-block; padding: 0.1em 0.3em;">chronos</code> as the username, it should not prompt you for a password.</li>
+<li>Become superuser with <code style="display: inline-block; padding: 0.1em 0.3em;">sudo bash</code></li>
+<li>In bash, run:</li>
+</ul>
+<pre># crossystem dev_boot_usb=1 dev_boot_legacy=1
+# set_gbb_flags.sh 0×489</pre>
+<h2>Reinstall the write-protect screw and Install Arch</h2>
+<p>Now you can reinstall the write-protect screw and proceed to install Arch. Good luck (;</p>
+]]></content:encoded>
+					
+					<wfw:commentRss>./../2014/installing-arch-on-the-c720-part-1-preparation/feed/index.html</wfw:commentRss>
+			<slash:comments>0</slash:comments>
+		
+		
+			</item>
+		<item>
+		<title>My new favorite laptop is not a laptop</title>
+		<link>./../2014/my-new-favorite-laptop-is-not-a-laptop/index.html</link>
+					<comments>./../2014/my-new-favorite-laptop-is-not-a-laptop/index.html#respond</comments>
+		
+		<dc:creator><![CDATA[Pedro Nariyoshi]]></dc:creator>
+		<pubDate>Thu, 29 May 2014 17:57:51 +0000</pubDate>
+				<category><![CDATA[Uncategorized]]></category>
+		<guid isPermaLink="false">https://pedro.thecrabdance.com/?p=224</guid>
+
+					<description><![CDATA[Or rather, that&#8217;s what Google wants you to think. Since the end of last year, I&#8217;ve been thinking about getting a Chromebook (specifically an Acer C720). It&#8217;s a small (11 Inches) laptop, Haswell-ish celeron processor, 2GB RAM, Wi-Fi, Webcam etc. To be fully honest, at first sight, there&#8217;s nothing too exciting about this laptop. What [&#8230;]]]></description>
+										<content:encoded><![CDATA[<p>Or rather, that&#8217;s what Google wants you to think. Since the end of last year, I&#8217;ve been thinking about getting a Chromebook (specifically an Acer C720). It&#8217;s a small (11 Inches) laptop, Haswell-ish celeron processor, 2GB RAM, Wi-Fi, Webcam etc. To be fully honest, at first sight, there&#8217;s nothing too exciting about this laptop. What really sold it to me was the price tag (pun intended). 199USD! Or 179USD for the refurb version, which I got. This is a laptop I would not be afraid of voiding the warranty.</p>
+<p>My previous setup was a Macbook Pro 13.3&#8243; (Early 2012, a.k.a. 8.1), I had made a few modifications on it, which included replacing the DVD drive by a SSD, upgrading the RAM to 8GB and adding some stickers (GPLv3, GNU and an inverted Debian logo over the Apple). Apart from a few annoyances I had with it initially (<a title="b43" href="http://wireless.kernel.org/en/users/Drivers/b43">b43</a> didn&#8217;t support the WiFi card very well, AHCI didn&#8217;t work on BIOS mode), I must say I really liked it. My main problem with it was the price. I didn&#8217;t actually buy it, I received it as a gift. Which made it all more complicated. I felt like I was carrying a small fortune everytime I was with it. I felt uncomfortable bringing it to school or anywhere outside my apartment. If a mobile computer is not mobile, what is the point?</p>
+<p>With these two facts in mind, I went ahead and bought the C720. I must say, I&#8217;m not disappointed. The C720 is a great little machine. The CPU + GPU chip is pretty powerful, the SSD is blazing fast (but originally pretty small), the battery life is superb (I get 8~10 hours), the touchpad is quite efficient (not as good as the MBP&#8217;s, but good none the less), the keyboard is soft and sensitive and it&#8217;s very light.</p>
+<p>Of course, not everything is perfect. The camera and screen are both just &#8220;okay&#8221;, not bad, but not great either. The 2GB of RAM are sufficient, but barely. If I could go back, I would&#8217;ve bought a 4GB RAM version (they were misteriously taken out of the market a month or so after launch). Having said that, I can still run an entire GNOME3 session with no major problems, except for opening a large number of tabs in the browser.</p>
+<p>With the sale of my trusty MBP, I was able to also buy a desktop computer for the heavier computation and gaming sessions. I&#8217;m not much of a gamer, but I like to play once in a while. The game I play the most is StarCraft II, but I&#8217;ve have a few games on Steam that I enjoy sporadically.</p>
+<p>The point of this post is just to tell people about my experience with the C720 <del>Chromebook</del> Laptop, which serves me better as a mobile computer in comparison with my previous setup. I don&#8217;t believe this is a perfect solution to everyone, but the Desktop+Laptop duo is working well for me. In the next posts, I might explain how I installed <a title="Arch" href="http://archlinux.org/">Arch</a> in it.</p>
+]]></content:encoded>
+					
+					<wfw:commentRss>./../2014/my-new-favorite-laptop-is-not-a-laptop/feed/index.html</wfw:commentRss>
+			<slash:comments>0</slash:comments>
+		
+		
+			</item>
+		<item>
+		<title>Creating a self-signed SSL Certificate</title>
+		<link>./../2014/creating-a-self-signed-ssl-certificate/index.html</link>
+					<comments>./../2014/creating-a-self-signed-ssl-certificate/index.html#respond</comments>
+		
+		<dc:creator><![CDATA[Pedro Nariyoshi]]></dc:creator>
+		<pubDate>Wed, 16 Apr 2014 14:52:44 +0000</pubDate>
+				<category><![CDATA[Sys Admin]]></category>
+		<guid isPermaLink="false">https://pedro.thecrabdance.com/?p=211</guid>
+
+					<description><![CDATA[Oh boy, recently a lot has been talked about OpenSSL&#8217;s bug known as heartbleed. The issue was caused by the &#8220;heartbeat&#8221; mechanism not checking bounds. I won&#8217;t go too much into the details, but you can read more about it in the previous link. A short explanation is also available on xkcd. Anyway, while I [&#8230;]]]></description>
+										<content:encoded><![CDATA[<p>Oh boy, recently a lot has been talked about OpenSSL&#8217;s bug known as <a title="heartbleed" href="http://en.wikipedia.org/wiki/Heartbleed">heartbleed</a>. The issue was caused by the &#8220;heartbeat&#8221; mechanism not checking bounds. I won&#8217;t go too much into the details, but you can read more about it in the previous link. A short explanation is also available on <a title="xkcd" href="http://xkcd.com/1354/">xkcd</a>.</p>
+<p>Anyway, while I don&#8217;t believe anyone with anything better to do would be trying to break into a server with very little sensitive information, it&#8217;s always good to play safe. So I&#8217;m regenerating my SSL certificates just in case. Also, I previously used 1024-bit certificates, so I&#8217;m using this opportunity to bump my certificates to 2048-bit. First of all, create a folder that only the your server user can read (in my case, the user is &#8220;http&#8221; and the server nginx):</p>
+<pre># mkdir /etc/nginx/ssl
+# chown http:http /etc/nginx/ssl
+# chmod 0700 /etc/nginx/ssl
+# cd /etc/nginx/ssl</pre>
+<p>Start by generating the key, this will ask you for a passphrase which is necessary to start nginx and to generate the csr:</p>
+<pre># openssl genrsa -des3 -out mykey.key 2048</pre>
+<p>Now generate the CSR (certificate signing request):</p>
+<pre># openssl req -new -key mykey.key -out mycert.csr</pre>
+<p>The passphrase you create will be necessary whenever you want to start the server. This adds security, but might prevent nginx from starting in the case of a power failure or other reboots. If you want to remove the passphrase:</p>
+<pre># openssl rsa -in mykey.key -out mykey.key</pre>
+<p>Sign the certificate and now the certificate will be &#8220;good to go&#8221;. You can change the number of days the certificate is valid for, I&#8217;ve set 365, which seems like a reasonable number:</p>
+<pre># openssl x509 -req -days 365 -in mycert.csr -signkey mykey.key -out mycert.crt</pre>
+<p>Now all you need is to configure your server to use the SSL certificate. In my case, I&#8217;m using it to secure an owncloud installation running on nginx:</p>
+<pre>server {
+        listen 443 ssl spdy;
+(...)
+        ssl_certificate /etc/nginx/ssl/mycert.crt;
+        ssl_certificate_key /etc/nginx/ssl/mykey.key;
+(...)
+}</pre>
+<p>A self-signed certificate will make the browser complain the first time you visit it, but subsequent visits should work fine. Happy hosting! (;<br />
+Sources:<br />
+<a title="A similar guide for CentOS/RHEL + Apache" href="http://www.cyberciti.biz/faq/nginx-self-signed-certificate-tutorial-on-centos-redhat-linux/">A similar guide for CentOS/RHEL and Apache</a><br />
+<a title="Akadia's guide for self-signed certificates" href="http://www.akadia.com/services/ssh_test_certificate.html">Akadia&#8217;s guide for self-signed certificates</a><br />
+<a title="A similar guide for Ubuntu 12.04 + nginx" href="https://www.digitalocean.com/community/articles/how-to-create-a-ssl-certificate-on-nginx-for-ubuntu-12-04">A similar guide for Ubuntu 12.04 + nginx</a></p>
+]]></content:encoded>
+					
+					<wfw:commentRss>./../2014/creating-a-self-signed-ssl-certificate/feed/index.html</wfw:commentRss>
+			<slash:comments>0</slash:comments>
+		
+		
+			</item>
+	</channel>
+</rss>

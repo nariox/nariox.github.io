@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"
+	xmlns:content="http://purl.org/rss/1.0/modules/content/"
+	xmlns:wfw="http://wellformedweb.org/CommentAPI/"
+	xmlns:dc="http://purl.org/dc/elements/1.1/"
+	xmlns:atom="http://www.w3.org/2005/Atom"
+	xmlns:sy="http://purl.org/rss/1.0/modules/syndication/"
+	xmlns:slash="http://purl.org/rss/1.0/modules/slash/"
+	
+	xmlns:georss="http://www.georss.org/georss"
+	xmlns:geo="http://www.w3.org/2003/01/geo/wgs84_pos#"
+	>
+
+<channel>
+	<title>Uncategorized &#8211; Pedro&#039;s blog</title>
+	<atom:link href="./index.html" rel="self" type="application/rss+xml" />
+	<link>./../../../index.html</link>
+	<description>Welcome to Pedro Nariyoshi&#039;s website</description>
+	<lastBuildDate>Fri, 23 Sep 2016 19:37:38 +0000</lastBuildDate>
+	<language>en-US</language>
+	<sy:updatePeriod>
+	hourly	</sy:updatePeriod>
+	<sy:updateFrequency>
+	1	</sy:updateFrequency>
+	<generator>https://wordpress.org/?v=5.9.3</generator>
+
+<image>
+	<url>https://i0.wp.com/pedro.crabdance.com/wp-content/uploads/2015/02/favicon.ico.gif?fit=16%2C16&#038;ssl=1</url>
+	<title>Uncategorized &#8211; Pedro&#039;s blog</title>
+	<link>./../../../index.html</link>
+	<width>32</width>
+	<height>32</height>
+</image> 
+	<item>
+		<title>Let&#8217;s Encrypt the web!</title>
+		<link>./../../../2016/lets-encrypt-the-web/index.html</link>
+					<comments>./../../../2016/lets-encrypt-the-web/index.html#respond</comments>
+		
+		<dc:creator><![CDATA[Pedro Nariyoshi]]></dc:creator>
+		<pubDate>Fri, 15 Jul 2016 12:50:18 +0000</pubDate>
+				<category><![CDATA[Uncategorized]]></category>
+		<guid isPermaLink="false">./../../../index.html?p=342</guid>
+
+					<description><![CDATA[Or at least your own personal websites. Let&#8217;s encrypt is, according to their website,  &#8220;a free, automated, and open certificate authority (CA), run for the public’s benefit. Let’s Encrypt is a service provided by the Internet Security Research Group (ISRG).&#8221; In summary, they provide valid and trusted SSL certificate for commoners like you and me [&#8230;]]]></description>
+										<content:encoded><![CDATA[<p>Or at least your own personal websites. Let&#8217;s encrypt is, according to their website,  &#8220;a free, automated, and open certificate authority (CA), run for the public’s benefit. Let’s Encrypt is a service provided by the <a href="https://letsencrypt.org/isrg/">Internet Security Research Group (ISRG)</a>.&#8221;</p>
+<p>In summary, they provide valid and trusted SSL certificate for commoners like you and me for free! Great stuff, no need for using self-signed certificates! First you need to obtain their client <strong>certbot</strong>. They provide a plugin to work directly with nginx, but I didn&#8217;t have much luck with it (it is worth mentioning that it is still in experimental phase). Here, I&#8217;ll show how to manually create your certificates and add them to nginx.</p>
+<p>As root, do:</p>
+<pre># certbot certonly --manual</pre>
+<p>Then enter your domain (or subdomain). And it&#8217;ll give you something like:</p>
+<pre>mkdir -p /tmp/certbot/public_html/.well-known/acme-challenge
+cd /tmp/certbot/public_html
+printf "%s" SOMETEXTANDNUMBERS &gt; .well-known/acme-challenge/SOMETEXTANDNUMBERS
+# run only once per server:
+$(command -v python2 || command -v python2.7 || command -v python2.6) -c \
+"import BaseHTTPServer, SimpleHTTPServer; \
+s = BaseHTTPServer.HTTPServer(('', 80), SimpleHTTPServer.SimpleHTTPRequestHandler); \
+s.serve_forever()"</pre>
+<p>Make sure varnish/nginx are not running, copy the code and run it (as root), then press enter. If you encounter errors, you might need to install the python packages for BaseHTTPServer and SimpleHTTPServer. Once you do that, the certificates will be stored at /etc/letsencrypt/live/yourdomain/fullchain.pem and the key to /etc/letsencrypt/live/yourdomain/privkey.pem, where &#8220;yourdomain&#8221; is the domain you sent to the script.</p>
+<p>Last step is to add these lines to your nginx configuration:</p>
+<pre>server{
+(...)
+ssl_certificate /etc/letsencrypt/live/yourdomain/fullchain.pem;
+ssl_certificate_key /etc/letsencrypt/live/yourdomain/privkey.pem;
+(...)
+}</pre>
+<p>You should be ready to run nginx/varnish now. The certificates are valid for 3 months, to renew them, simply follow the same instructions again. (;</p>
+<p>That should be all! Good luck.</p>
+]]></content:encoded>
+					
+					<wfw:commentRss>./../../../2016/lets-encrypt-the-web/feed/index.html</wfw:commentRss>
+			<slash:comments>0</slash:comments>
+		
+		
+			</item>
+		<item>
+		<title>Using OpenSSH as a SOCKS proxy</title>
+		<link>./../../../2015/using-openssh-as-a-socks-proxy/index.html</link>
+					<comments>./../../../2015/using-openssh-as-a-socks-proxy/index.html#respond</comments>
+		
+		<dc:creator><![CDATA[Pedro Nariyoshi]]></dc:creator>
+		<pubDate>Tue, 06 Jan 2015 20:00:54 +0000</pubDate>
+				<category><![CDATA[Uncategorized]]></category>
+		<guid isPermaLink="false">https://pedro.thecrabdance.com/?p=287</guid>
+
+					<description><![CDATA[I often find myself in need to access papers, files and other things that I only have access from within the university network. A neat way to get access is by using OpenSSH as proxy server (I&#8217;ve tried unsuccessfully to configure the university&#8217;s VPN, but to no avail&#8230;). The steps are simple, first run: ssh [&#8230;]]]></description>
+										<content:encoded><![CDATA[<p>I often find myself in need to access papers, files and other things that I only have access from within the university network. A neat way to get access is by using OpenSSH as proxy server (I&#8217;ve tried unsuccessfully to configure the university&#8217;s VPN, but to no avail&#8230;). The steps are simple, first run:</p>
+<pre>ssh -NCD 9999 uname@university.edu</pre>
+<ul>
+<li>-N: prevents an interactive shell from being opened, not strictly necessary</li>
+<li>-C: enables gzip compression, not sure if it actually improves performance (given the extra CPU overhead), but the overall result was satisfactory, so I left it on.</li>
+<li>-D [port]: enables local dynamic port forwarding to localhost:9999</li>
+</ul>
+<p>Now it&#8217;s time to configure your browser. On Firefox, the proxy settings are found at Preferences -> Advanced -> Network -> Settings (although there are add-ons that allow quick switch from different proxy servers). Enable &#8220;Manual Proxy&#8221; and set <em>localhost</em>  as your host and <em>9999</em> as your port. You should be now done.</p>
+]]></content:encoded>
+					
+					<wfw:commentRss>./../../../2015/using-openssh-as-a-socks-proxy/feed/index.html</wfw:commentRss>
+			<slash:comments>0</slash:comments>
+		
+		
+			</item>
+		<item>
+		<title>Mapping the Caps Lock key as Super Key</title>
+		<link>./../../../2015/mapping-the-caps-lock-key-as-super-key/index.html</link>
+					<comments>./../../../2015/mapping-the-caps-lock-key-as-super-key/index.html#respond</comments>
+		
+		<dc:creator><![CDATA[Pedro Nariyoshi]]></dc:creator>
+		<pubDate>Tue, 06 Jan 2015 15:01:27 +0000</pubDate>
+				<category><![CDATA[Uncategorized]]></category>
+		<guid isPermaLink="false">https://pedro.thecrabdance.com/?p=284</guid>
+
+					<description><![CDATA[I&#8217;ve never found the Caps Lock key very useful. Besides never using it, it takes a very large space in a particularly easy-to-reach region of the keyboard (next to my left pinky). It seems like Google shares my opinion. Ever since I&#8217;ve gotten my Acer C720, I&#8217;ve noticed how useful would be to have the [&#8230;]]]></description>
+										<content:encoded><![CDATA[<p>I&#8217;ve never found the <em>Caps Lock</em> key very useful. Besides never using it, it takes a very large space in a particularly easy-to-reach region of the keyboard (next to my left pinky). It seems like Google shares my opinion. Ever since I&#8217;ve gotten my Acer C720, I&#8217;ve noticed how useful would be to have the <em>Super</em> key (<em>aka Windows </em>key) more easily accessible to my fingers.</p>
+<p>Then I decided to map the <em>Caps Lock</em> key as a <em>Super</em> key. It didn&#8217;t take long for me to find that this mapping is so common that a single short command can be used to do it:</p>
+<pre>setxkbmap <span class="re5">-option</span> caps:super</pre>
+<p>There, easy enough. But there are other ways to do this. The one I ended up using is to use <em>dconf-editor</em> to set this modifier as default in GNOME. The key name is <em>org.gnome.desktop.input-sources.xkb-options</em>. Just add <em>[&#8216;caps:super&#8217;]</em> and you&#8217;ll be set.</p>
+]]></content:encoded>
+					
+					<wfw:commentRss>./../../../2015/mapping-the-caps-lock-key-as-super-key/feed/index.html</wfw:commentRss>
+			<slash:comments>0</slash:comments>
+		
+		
+			</item>
+		<item>
+		<title>My new favorite laptop is not a laptop</title>
+		<link>./../../../2014/my-new-favorite-laptop-is-not-a-laptop/index.html</link>
+					<comments>./../../../2014/my-new-favorite-laptop-is-not-a-laptop/index.html#respond</comments>
+		
+		<dc:creator><![CDATA[Pedro Nariyoshi]]></dc:creator>
+		<pubDate>Thu, 29 May 2014 17:57:51 +0000</pubDate>
+				<category><![CDATA[Uncategorized]]></category>
+		<guid isPermaLink="false">https://pedro.thecrabdance.com/?p=224</guid>
+
+					<description><![CDATA[Or rather, that&#8217;s what Google wants you to think. Since the end of last year, I&#8217;ve been thinking about getting a Chromebook (specifically an Acer C720). It&#8217;s a small (11 Inches) laptop, Haswell-ish celeron processor, 2GB RAM, Wi-Fi, Webcam etc. To be fully honest, at first sight, there&#8217;s nothing too exciting about this laptop. What [&#8230;]]]></description>
+										<content:encoded><![CDATA[<p>Or rather, that&#8217;s what Google wants you to think. Since the end of last year, I&#8217;ve been thinking about getting a Chromebook (specifically an Acer C720). It&#8217;s a small (11 Inches) laptop, Haswell-ish celeron processor, 2GB RAM, Wi-Fi, Webcam etc. To be fully honest, at first sight, there&#8217;s nothing too exciting about this laptop. What really sold it to me was the price tag (pun intended). 199USD! Or 179USD for the refurb version, which I got. This is a laptop I would not be afraid of voiding the warranty.</p>
+<p>My previous setup was a Macbook Pro 13.3&#8243; (Early 2012, a.k.a. 8.1), I had made a few modifications on it, which included replacing the DVD drive by a SSD, upgrading the RAM to 8GB and adding some stickers (GPLv3, GNU and an inverted Debian logo over the Apple). Apart from a few annoyances I had with it initially (<a title="b43" href="http://wireless.kernel.org/en/users/Drivers/b43">b43</a> didn&#8217;t support the WiFi card very well, AHCI didn&#8217;t work on BIOS mode), I must say I really liked it. My main problem with it was the price. I didn&#8217;t actually buy it, I received it as a gift. Which made it all more complicated. I felt like I was carrying a small fortune everytime I was with it. I felt uncomfortable bringing it to school or anywhere outside my apartment. If a mobile computer is not mobile, what is the point?</p>
+<p>With these two facts in mind, I went ahead and bought the C720. I must say, I&#8217;m not disappointed. The C720 is a great little machine. The CPU + GPU chip is pretty powerful, the SSD is blazing fast (but originally pretty small), the battery life is superb (I get 8~10 hours), the touchpad is quite efficient (not as good as the MBP&#8217;s, but good none the less), the keyboard is soft and sensitive and it&#8217;s very light.</p>
+<p>Of course, not everything is perfect. The camera and screen are both just &#8220;okay&#8221;, not bad, but not great either. The 2GB of RAM are sufficient, but barely. If I could go back, I would&#8217;ve bought a 4GB RAM version (they were misteriously taken out of the market a month or so after launch). Having said that, I can still run an entire GNOME3 session with no major problems, except for opening a large number of tabs in the browser.</p>
+<p>With the sale of my trusty MBP, I was able to also buy a desktop computer for the heavier computation and gaming sessions. I&#8217;m not much of a gamer, but I like to play once in a while. The game I play the most is StarCraft II, but I&#8217;ve have a few games on Steam that I enjoy sporadically.</p>
+<p>The point of this post is just to tell people about my experience with the C720 <del>Chromebook</del> Laptop, which serves me better as a mobile computer in comparison with my previous setup. I don&#8217;t believe this is a perfect solution to everyone, but the Desktop+Laptop duo is working well for me. In the next posts, I might explain how I installed <a title="Arch" href="http://archlinux.org/">Arch</a> in it.</p>
+]]></content:encoded>
+					
+					<wfw:commentRss>./../../../2014/my-new-favorite-laptop-is-not-a-laptop/feed/index.html</wfw:commentRss>
+			<slash:comments>0</slash:comments>
+		
+		
+			</item>
+		<item>
+		<title>Hello world</title>
+		<link>./../../../2013/hello-world/index.html</link>
+					<comments>./../../../2013/hello-world/index.html#respond</comments>
+		
+		<dc:creator><![CDATA[Pedro Nariyoshi]]></dc:creator>
+		<pubDate>Thu, 17 Oct 2013 13:28:19 +0000</pubDate>
+				<category><![CDATA[Uncategorized]]></category>
+		<guid isPermaLink="false">./../../../index.html?p=77</guid>
+
+					<description><![CDATA[Hi, welcome to my blog. I hope you find something interesting here. (; &#160;]]></description>
+										<content:encoded><![CDATA[<p>Hi,</p>
+<p>welcome to my blog. I hope you find something interesting here. (;</p>
+<p><a href="https://i0.wp.com/pedro.crabdance.com/wp-content/uploads/2013/12/fsjal.png?ssl=1"><img data-attachment-id="163" data-permalink="./../../../2013/hello-world/fsjal-2/index.html" data-orig-file="https://i0.wp.com/pedro.crabdance.com/wp-content/uploads/2013/12/fsjal.png?fit=300%2C262&amp;ssl=1" data-orig-size="300,262" data-comments-opened="1" data-image-meta="{&quot;aperture&quot;:&quot;0&quot;,&quot;credit&quot;:&quot;&quot;,&quot;camera&quot;:&quot;&quot;,&quot;caption&quot;:&quot;&quot;,&quot;created_timestamp&quot;:&quot;0&quot;,&quot;copyright&quot;:&quot;&quot;,&quot;focal_length&quot;:&quot;0&quot;,&quot;iso&quot;:&quot;0&quot;,&quot;shutter_speed&quot;:&quot;0&quot;,&quot;title&quot;:&quot;&quot;}" data-image-title="fsjal" data-image-description="" data-image-caption="" data-medium-file="https://i0.wp.com/pedro.crabdance.com/wp-content/uploads/2013/12/fsjal.png?fit=300%2C262&amp;ssl=1" data-large-file="https://i0.wp.com/pedro.crabdance.com/wp-content/uploads/2013/12/fsjal.png?fit=300%2C262&amp;ssl=1" loading="lazy" class="aligncenter wp-image-163 size-full" src="https://i0.wp.com/pedro.crabdance.com/wp-content/uploads/2013/12/fsjal.png?resize=300%2C262&#038;ssl=1" alt="fsjal" width="300" height="262" data-recalc-dims="1" /></a></p>
+<p>&nbsp;</p>
+]]></content:encoded>
+					
+					<wfw:commentRss>./../../../2013/hello-world/feed/index.html</wfw:commentRss>
+			<slash:comments>0</slash:comments>
+		
+		
+			</item>
+	</channel>
+</rss>
